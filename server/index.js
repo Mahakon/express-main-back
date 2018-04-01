@@ -19,8 +19,8 @@ app.use(userSession.getSession());
 app.use('/api', apiRouter);
 
 //for reloading page
-app.use('/sign-in', staticRouter);
-app.use('/sign-up', staticRouter);
+app.use('auth/sign-in', staticRouter);
+app.use('auth/sign-up', staticRouter);
 app.use('/user/:id', staticRouter);
 
 app.listen(PORT, () =>
