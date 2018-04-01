@@ -5,7 +5,7 @@ const userSession = require('./sessions/UserSession');
 const apiRouter =require('./routers/api/apiRouter');
 const staticRouter = require('./routers/static/staticRouter');
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 80;
 const app = express();
 
 app.set('trust proxy', 1);
