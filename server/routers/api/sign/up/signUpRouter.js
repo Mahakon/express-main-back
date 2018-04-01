@@ -17,7 +17,6 @@ router.post('/', upload.fields([]), (req, res) => {
           res.send({id: id});
         },
         err => {
-          console.log(err);
           res.status(500).send({error: err});
         }
       );
