@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 
 router.post('/', upload.fields([]), (req, res) => {
   const user = req.body;
-  //res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   if (user.login === '' || user.password === '') {
     res.status(404).send({ error: "not found" });
   } else {
