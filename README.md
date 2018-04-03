@@ -2,14 +2,14 @@
 
 1) _Регистрация user_
 
-![](gifs/sign-up.gif "User Sign Up")
+![Demo](./gifs/sign-up.gif)
 
 
 2) _Вход_
 
-![](gifs/sign-in.gif "User Sign In")
+![Demo](./gifs/sign-in.gif)
 
 3) _Получение login по id_
 
-![](gifs/user-login.gif "Get login")
+![Demo](./gifs/user-login.gif)
 
