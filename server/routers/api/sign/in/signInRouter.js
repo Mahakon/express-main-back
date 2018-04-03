@@ -6,6 +6,7 @@ const upload = multer();
 const router = express.Router();
 
 router.get('/', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.session.user_id) {
     res.send({id: req.session.user_id});
   } else {
