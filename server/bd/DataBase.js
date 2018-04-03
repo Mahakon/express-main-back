@@ -46,6 +46,59 @@ class DataBase {
     })
   }
 
+  getUserIdByVk(vk = null) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `SELECT id
+                      FROM ${this.usersTableName}
+                        WHERE vk="${vk}"`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result.id)
+        })
+      })
+    })
+  }
+
+  addVkUser(login = null, vk = null) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `INSERT INTO
+                       ${this.usersTableName}(login, email, password, vk)
+                         VALUES (
+                           "${login}", 
+                           NULL, 
+                           NULL,
+                           "${vk}"
+                         )`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result.insertId)
+        })
+      })
+    })
+  }
+
   isUserInDB(userId=null) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
