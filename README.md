@@ -2,7 +2,7 @@
 
 1) _Регистрация user_
 
-![Demo](gifs/sign-up.gif)
+![Alt text](gifs/sign-up.gif)
 
 
 2) _Вход_
