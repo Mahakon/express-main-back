@@ -15,6 +15,7 @@ router.post('/', upload.fields([]), (req, res) => {
       .then(
         id => {
           req.session.user_id = id;
+          req.session.save();
           res.send({id: id});
         },
         err => {

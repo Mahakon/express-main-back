@@ -28,6 +28,7 @@ router.post('/', upload.fields([]), (req, res) => {
             return;
           }
           req.session.user_id = id;
+          req.session.save();
           res.send({id: id});
         },
         err => {
