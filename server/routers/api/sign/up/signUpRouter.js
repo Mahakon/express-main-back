@@ -14,8 +14,10 @@ router.post('/', upload.fields([]), (req, res) => {
     bd.addUser(user.login, user.email, user.password)
       .then(
         id => {
-          req.session.user_id = id;
-          req.session.save();
+          if (req.session.user_id) {
+            req.session.user_id = id;
+            req.session.save();
+          }
           res.send({id: id});
         },
         err => {
