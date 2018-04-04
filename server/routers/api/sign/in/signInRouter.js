@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   if (req.session.user_id) {
     res.send({id: req.session.user_id});
   } else {
-    res.send({error: 'notvalid'});
+    res.send({id: -1});
   }
 });
 
