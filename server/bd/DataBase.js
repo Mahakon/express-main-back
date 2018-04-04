@@ -63,8 +63,11 @@ class DataBase {
             console.log(err);
             reject(err)
           }
-
-          resolve(result.id)
+          if (result.length === 0) {
+            resolve(undefined)
+          } else {
+            resolve(result[0].id)
+          }
         })
       })
     })

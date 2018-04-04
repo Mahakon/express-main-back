@@ -9,11 +9,13 @@ const router = express.Router();
 router.get('/', (req, res, next) => {
   let accessToken;
   let vkUserId;
+
   const url = `https://oauth.vk.com/access_token?` +
-              `client_id=${config.clientId}&` +
-              `client_secret=${config.secretKey}&` +
-              `redirect_uri=${config.host}/api/auth/vk&` +
-              `code=${req.query.code}`;
+    `client_id=${config.clientId}&` +
+    `client_secret=${config.secretKey}&` +
+    `redirect_uri=${config.host}/api/auth/vk&` +
+    `code=${req.query.code}`;
+
   fetch(url)
     .then(ans => ans.json())
     .then(data => {
@@ -24,33 +26,56 @@ router.get('/', (req, res, next) => {
     .then(
       id => {
         if (id === undefined) {
-          return fetch(`https://api.vk.com/method/users.get?` +
-            `user_id=${vkUserId}&` +
-            `access_token=${accessToken}&v=5.52`)
+          req.userData = {
+            accessToken: accessToken,
+            vkUserId: vkUserId
+          };
+          next('route')
+        } else {
+          req.session.user_id = id;
+          next();
         }
-
-        req.session.user_id = id;
-        res.redirect(config.host);
       },
       err => {
         console.log(err);
-        res.redirect(config.host);
+        next();
       }
     )
-    .then(ans => ans.json())
-    .then(data => {
-      return bd.addVkUser(data.response[0].first_name +" " + data.response[0].last_name, data.response[0].id)
-    })
+}, function (req, res, next) {
+  res.redirect(config.host);
+  res.end();
+});
+
+const newVkUser = function (req, res, next) {
+  const url = `https://api.vk.com/method/users.get?` +
+              `user_id=${req.userData.vkUserId}&` +
+              `access_token=${req.userData.accessToken}&v=5.52`;
+
+  fetch(url)
+    .then(
+      ans => ans.json()
+    )
+    .then(
+      data => bd.addVkUser(
+                data.response[0].first_name +" " + data.response[0].last_name,
+                data.response[0].id
+      )
+    )
     .then(
       id => {
         req.session.user_id = id;
-        res.redirect(config.host);
+        next();
       },
       err => {
         console.log(err);
-        res.redirect(config.host);
+        next();
       }
-    );
+    )
+};
+
+router.use(newVkUser, (req, res, next) => {
+  res.redirect(config.host);
+  res.end();
 });
 
 module.exports = router;
