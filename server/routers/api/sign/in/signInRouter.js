@@ -27,6 +27,7 @@ router.post('/', upload.fields([]), (req, res) => {
             res.status(404).send({error: "not found"});
             return;
           }
+          req.session.user_id = id;
           res.send({id: id});
         },
         err => {
