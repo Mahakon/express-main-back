@@ -151,6 +151,7 @@ class DataBase {
   }
 
   isAuthUser(userLogin=null, userPassword=null) {
+
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
@@ -193,8 +194,12 @@ class DataBase {
             reject(err)
           }
 
-          if (passwordHash.verify(userPassword, result[0].password)) {
-            resolve(result[0].id)
+          if (result[0] !== undefined) {
+            if (passwordHash.verify(userPassword, result[0].password)) {
+              resolve(result[0].id)
+            } else {
+              resolve(undefined)
+            }
           } else {
             resolve(undefined)
           }

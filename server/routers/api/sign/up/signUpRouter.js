@@ -7,18 +7,15 @@ const router = express.Router();
 
 router.post('/', upload.fields([]), (req, res) => {
   const user = req.body;
-  res.setHeader('Access-Control-Allow-Origin', '*');
   if (user.login === '' || user.password === '' || user.email === '') {
     res.status(404).send({error: "not found"});
   } else {
     bd.addUser(user.login, user.email, user.password)
       .then(
         id => {
-          if (req.session.user_id) {
-            req.session.user_id = id;
-            req.session.save();
-          }
-          res.send({id: id});
+          res.send({
+            id: id
+          });
         },
         err => {
           res.status(500).send({error: err});

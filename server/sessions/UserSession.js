@@ -13,7 +13,7 @@ class UserSession {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: true,
+        secure: false,
         maxAge: 86400000, //1 day
         httpOnly: true
       },
