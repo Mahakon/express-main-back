@@ -22,6 +22,7 @@ router.get('/set', (req, res) => {
 });
 
 router.get('/delete', (req, res) => {
+  console.log(req.session.id);
   userSession.getSessionStore().destroy(req.session.id, (err) => {
     if (err) {
       res.status(500).send({error: err});
