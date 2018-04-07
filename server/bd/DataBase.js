@@ -4,7 +4,7 @@ const passwordHash = require('password-hash');
 class DataBase {
   constructor() {
     this.pool  = mysql.createPool({
-      connectionLimit : 20,
+      connectionLimit : 99,
       host            : 'localhost',
       user            : 'root',
       password        : '9675',
