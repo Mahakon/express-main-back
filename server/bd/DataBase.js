@@ -73,6 +73,33 @@ class DataBase {
     })
   }
 
+  getUserIdByBitbucket(bitbucket = null) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `SELECT id
+                      FROM ${this.usersTableName}
+                        WHERE bitbucket="${bitbucket}"`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+          if (result.length === 0) {
+            resolve(undefined)
+          } else {
+            resolve(result[0].id)
+          }
+        })
+      })
+    })
+  }
+
   addVkUser(login = null, vk = null) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
@@ -88,6 +115,36 @@ class DataBase {
                            NULL, 
                            NULL,
                            "${vk}"
+                         )`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result.insertId)
+        })
+      })
+    })
+  }
+
+  addBitbucketUser(login = null, bitbucket = null) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `INSERT INTO
+                       ${this.usersTableName}(login, email, password, vk, bitbucket)
+                         VALUES (
+                           "${login}", 
+                           NULL, 
+                           NULL,
+                           NULL,
+                           "${bitbucket}"
                          )`;
 
         connection.query(SQL, (err, result) => {
