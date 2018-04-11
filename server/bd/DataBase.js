@@ -7,7 +7,7 @@ class DataBase {
       connectionLimit : 99,
       host            : 'localhost',
       user            : 'root',
-      password        : '9675',
+      password        : 'qwerty',
       database        : 'tinkoff'
     });
 
