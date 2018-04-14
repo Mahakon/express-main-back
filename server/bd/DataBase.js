@@ -1,5 +1,8 @@
 const  mysql = require('mysql');
 const passwordHash = require('password-hash');
+var fs = require('fs');
+
+
 
 class DataBase {
   constructor() {
@@ -16,6 +19,101 @@ class DataBase {
 
   getPool() {
     return this.pool;
+  }
+
+  updateUserPassword(userId, old_password,  password)  {
+      return new Promise((resolve, reject) => {
+          this.pool.getConnection((err, connection) => {
+              if (err) {
+                  console.error('updateUserPassword', err);
+                  reject(err);
+              }
+              let SQL = `SELECT password
+                      FROM ${this.usersTableName}
+                        WHERE id="${userId}"` ;
+
+              connection.query(SQL, (err, result) => {
+                  if (err) {
+                      console.error('updateUserPassword', err);
+                      reject(err);
+                  }
+                  if (!result.length){
+                      console.error('updateUserPassword', err);
+                      reject(err);
+                  }
+                  if (passwordHash.generate(old_password), passwordHash.verify(result[0].password)) {
+                    reject("Неверный пароль");
+                  }else{
+                      SQL = `UPDATE ${this.usersTableName} SET password = '${passwordHash.generate(password)}' WHERE id='${userId}'` ;
+                      connection.query(SQL, (err, result) => {
+                          if (err) {
+                              console.error('updateUserPassword', err);
+                              reject(err);
+                          }
+                          resolve(true);
+                      });
+                  }
+                  console.log(result);
+                  resolve(true);
+              })
+          })
+      })
+  }
+
+    updateUserAvatar(userId, src) {
+        return new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    console.error('updateUserAvatar', err);
+                    reject(err);
+                }
+                if (src === null) src = '';
+                let SQL = `SELECT avatar 
+                      FROM ${this.usersTableName} 
+                        WHERE id = ${userId}`; ;
+                connection.query(SQL, (err, result) => {
+
+                    let avatar = result[0].avatar;
+                    // console.log(avatar);
+                    if (avatar) {
+                        fs.unlinkSync('./static/public/dist' + avatar);
+                    }
+                });
+                 SQL = `UPDATE ${this.usersTableName} SET avatar = '${src}'  WHERE id=${userId}` ;
+
+                connection.query(SQL, (err, result) => {
+                    if (err) {
+                        console.error('updateUserAvatar', err);
+                        reject(err)
+                    }
+
+                    resolve(true)
+                });
+            })
+        })
+    }
+
+  updateUserInfo(userId, userLogin, name, surname) {
+      return new Promise((resolve, reject) => {
+          this.pool.getConnection((err, connection) => {
+              if (err) {
+                  console.error('updateUserInfo', err);
+                  reject(err);
+              }
+              if (name === null) name = '';
+              if (surname === null) surname = '';
+              const SQL = `UPDATE ${this.usersTableName} SET login = '${userLogin}', name = '${name}', surname = '${surname}'  WHERE id=${userId}` ;
+
+              connection.query(SQL, (err, result) => {
+                  if (err) {
+                      console.error('updateUserInfo', err);
+                      reject(err)
+                  }
+
+                  resolve(true)
+              })
+          })
+      })
   }
 
   addUser(userLogin=null, userEmail=null, userPassword=null) {
@@ -162,6 +260,7 @@ class DataBase {
   isUserInDB(userId=null) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
+          console.log('userID', userId);
         if (err) {
           console.log(err);
           reject(err);
@@ -177,7 +276,7 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result[0]['COUNT(*)'])
+                resolve(result[0]['COUNT(*)'])
         })
       })
     })
@@ -191,7 +290,7 @@ class DataBase {
           reject(err);
         }
 
-        const SQL = `SELECT login 
+        const SQL = `SELECT login, name, surname, avatar
                       FROM ${this.usersTableName}
                         WHERE id=${userId}`;
 
@@ -201,12 +300,35 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result[0].login)
+          resolve([result[0].login, result[0].name, result[0].surname, result[0].avatar])
         })
       })
     })
   }
+  // Првоерка есть ли такие данные
+    checkName(name, value) {
+        return new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                   // console.log(err);
+                    reject(err);
+                }
 
+                const SQL = `SELECT id 
+                      FROM ${this.usersTableName} 
+                        WHERE ${name} = "${value}"`;
+              //  console.log(SQL);
+                connection.query(SQL, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        reject(err);
+                    }
+
+                    resolve(!!result.length);
+                })
+            });
+        });
+    }
   isAuthUser(userLogin=null, userPassword=null) {
 
     return new Promise((resolve, reject) => {
@@ -237,14 +359,14 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+        //  console.log(err);
           reject(err);
         }
 
         const SQL = `SELECT id, password 
                       FROM ${this.usersTableName}
                         WHERE login="${userLogin}"`;
-
+      //  console.log(SQL);
         connection.query(SQL, (err, result) => {
           if (err) {
             console.log(err);
@@ -252,6 +374,7 @@ class DataBase {
           }
 
           if (result[0] !== undefined) {
+              console.log(userPassword,result[0].password);
             if (passwordHash.verify(userPassword, result[0].password)) {
               resolve(result[0].id)
             } else {
