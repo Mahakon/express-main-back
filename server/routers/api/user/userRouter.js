@@ -64,6 +64,9 @@ router.delete('/:id/delAvatar/', (req, res) => {
 router.get('/data', (req, res) => {
   let data = {
     login: '',
+    name: '',
+    surname: '',
+    avatar: '',
     projects: []
   };
   db.isUserInDB(req.query.id)
@@ -76,17 +79,25 @@ router.get('/data', (req, res) => {
         db.getUserLogin(req.query.id)
           .then(
               ([login, name, surname, avatar]) => {
-                  res.send({
-                      login: login,
-                      name: name,
-                      surname: surname,
-                      avatar: avatar
-                  });
+                  data.login = login;
+                  data.name = name;
+                  data.surname = surname;
+                  data.avatar = avatar;
+                return db.getProjects(req.query.id)
             },
             err => {
               res.status(500).send({ error: err });
             }
           )
+          .then(
+            projects => {
+              data.projects = projects;
+              res.send(data);
+            },
+            err => {
+              console.log(err);
+              res.status(500).send({err: err});
+          })
       },
       err => {
         res.status(500).send({ error: err });
@@ -162,14 +173,10 @@ router.post('/:id/update/', upload.fields([]), (req, res) => {
         db.updateUserInfo(req.params.id, req.body.login, req.body.name, req.body.surname)
           .then(
             status => {
-             // console.log(req);
-              res.status(200).send({ success: status });
-            login => {
-              data.login = login;
-              return db.getProjects(req.query.id)
+              // console.log(req);
+              res.status(200).send({success: status});
             },
             err => {
-              console.log(err);
               res.status(500).send({err: err});
             }
           )
