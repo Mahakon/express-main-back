@@ -12,6 +12,10 @@ class DataBase {
     });
 
     this.usersTableName = 'users';
+    this.projectsTableName = 'project';
+    this.conProjectUserTableName = 'project_user';
+    this.tasksTableName = 'task';
+    this.conTaskProjectTableName = 'task_project';
   }
 
   getPool() {
@@ -40,7 +44,8 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result.insertId)
+          resolve(result.insertId);
+          connection.release();
         })
       })
     })
@@ -68,6 +73,7 @@ class DataBase {
           } else {
             resolve(result[0].id)
           }
+          connection.release();
         })
       })
     })
@@ -95,6 +101,7 @@ class DataBase {
           } else {
             resolve(result[0].id)
           }
+          connection.release();
         })
       })
     })
@@ -123,7 +130,8 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result.insertId)
+          resolve(result.insertId);
+          connection.release();
         })
       })
     })
@@ -153,7 +161,8 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result.insertId)
+          resolve(result.insertId);
+          connection.release();
         })
       })
     })
@@ -177,7 +186,8 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result[0]['COUNT(*)'])
+          resolve(result[0]['COUNT(*)']);
+          connection.release();
         })
       })
     })
@@ -201,7 +211,8 @@ class DataBase {
             reject(err)
           }
 
-          resolve(result[0].login)
+          resolve(result[0].login);
+          connection.release();
         })
       })
     })
@@ -227,7 +238,8 @@ class DataBase {
             reject(result)
           }
 
-          resolve(result[0]['COUNT(*)'])
+          resolve(result[0]['COUNT(*)']);
+          connection.release();
         })
       })
     })
@@ -260,6 +272,150 @@ class DataBase {
           } else {
             resolve(undefined)
           }
+          connection.release();
+        })
+      })
+    })
+  }
+
+  addProject(userId, title) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `INSERT INTO
+                       ${this.projectsTableName}(title)
+                         VALUES (
+                           "${title}"
+                         )`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          const projectId = result.insertId;
+          resolve(result.insertId);
+
+          SQL = `INSERT INTO
+                     ${this.conProjectUserTableName}(project_id, user_id)
+                       VALUES (
+                         ${projectId},
+                         ${userId} 
+                       )`;
+
+          connection.query(SQL, (err, result) => {
+            if (err) {
+              console.log(err);
+              reject(err)
+            }
+
+            resolve(projectId);
+            connection.release();
+          })
+        })
+      })
+    })
+  }
+
+  getProjects(userId) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `SELECT p.id, p.title
+                      FROM ${this.projectsTableName} p
+                        LEFT JOIN ${this.conProjectUserTableName} c
+                          ON p.id = c.project_id
+                            WHERE c.user_id = ${userId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result);
+          connection.release();
+        })
+      })
+    })
+  };
+
+  getTasks(projectId) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `SELECT t.id, t.discription, t.status
+                      FROM ${this.tasksTableName} t
+                        LEFT JOIN ${this.conTaskProjectTableName} c
+                          ON t.id = c.task_id
+                            WHERE c.project_id = ${projectId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result);
+          connection.release();
+        })
+      })
+    })
+  };
+
+  addTask(projectId, taskDiscription, taskStatus) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `INSERT INTO
+                       ${this.tasksTableName}(discription, status)
+                         VALUES (
+                           "${taskDiscription}",
+                           "${taskStatus}"
+                         )`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          const taskId = result.insertId;
+          resolve(result.insertId);
+
+          SQL = `INSERT INTO
+                     ${this.conTaskProjectTableName}(task_id, project_id)
+                       VALUES (
+                         ${taskId},
+                         ${projectId} 
+                       )`;
+
+          connection.query(SQL, (err, result) => {
+            if (err) {
+              console.log(err);
+              reject(err)
+            }
+
+            resolve(projectId);
+            connection.release();
+          })
         })
       })
     })

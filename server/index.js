@@ -8,6 +8,7 @@ const cors = require('cors');
 
 const PORT = process.env.PORT || 80;
 const app = express();
+const expressWs = require('express-ws')(app);
 
 app.set('trust proxy', 1);
 
@@ -25,6 +26,7 @@ app.use('/auth/sign-in', staticRouter);
 app.use('/auth/sign-up', staticRouter);
 app.use('/cabinet', staticRouter);
 app.use('/cabinet/user', staticRouter);
+app.use('/cabinet/projects', staticRouter);
 
 app.listen(PORT, () =>
 console.log('Express app listening on localhost: ' + PORT));
