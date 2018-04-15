@@ -3,10 +3,11 @@ const db = require('../../../bd/DataBase');
 const userSession = require('../../../sessions/UserSession');
 const multer  = require('multer');
 const router = express.Router();
+const path = require('path');
 let sessionId;
 var storage = multer.diskStorage({ //multers disk storage settings
     destination: function (req, file, cb) {
-        cb(null, './static/public/dist/avatars/')
+        cb(null, path.join(__dirname, '../../../../static/public/dist/avatars/'))
     },
     filename: function (req, file, cb) {
         var datetimestamp = Date.now();

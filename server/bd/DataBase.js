@@ -1,6 +1,7 @@
 const  mysql = require('mysql');
 const passwordHash = require('password-hash');
 var fs = require('fs');
+const path = require('path');
 
 
 
@@ -80,7 +81,7 @@ class DataBase {
                     let avatar = result[0].avatar;
                     // console.log(avatar);
                     if (avatar) {
-                        fs.unlinkSync('./static/public/dist' + avatar);
+                        fs.unlinkSync(path.join(__dirname, '../../static/public/dist') + avatar);
                     }
                 });
                  SQL = `UPDATE ${this.usersTableName} SET avatar = '${src}'  WHERE id=${userId}` ;
