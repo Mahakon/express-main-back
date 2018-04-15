@@ -7,8 +7,8 @@ router.get('/get', (req, res) => {
   db.getTasks(req.query.id)
     .then(
       value => {
-        console.log(value);
-        res.send(value)
+        console.log(value + "kfsal");
+        res.send(value);
       },
       err => {
         console.log(err);
