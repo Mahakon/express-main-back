@@ -544,6 +544,92 @@ class DataBase {
     })
   }
 
+  deleteTask(taskId) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `DELETE
+                     FROM ${this.conTaskProjectTableName}
+                       WHERE task_id=${taskId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve("Number of records deleted: " + result.affectedRows);
+
+          SQL = `DELETE 
+                   FROM ${this.tasksTableName}
+                     WHERE id=${taskId}`;
+
+          connection.query(SQL, (err, result) => {
+            if (err) {
+              console.log(err);
+              reject(err)
+            }
+
+            resolve("Number of records deleted: " + result.affectedRows);
+            connection.release();
+          })
+        })
+      })
+    })
+  }
+
+  updateTaskDiscription(taskId, taskDiscription) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `UPDATE ${this.tasksTableName} 
+                     SET  discription="${taskDiscription}" 
+                       WHERE id=${taskId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve("Number of records change discription: " + result.affectedRows);
+        })
+      })
+    })
+  }
+
+  updateTaskStatus(taskId, taskStatus) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `UPDATE ${this.tasksTableName} 
+                     SET  status="${taskStatus}" 
+                       WHERE id=${taskId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve("Number of records change discription: " + result.affectedRows);
+        })
+      })
+    })
+  }
+
   close() {
     this.pool.end(function (err) {
       console.log(err);

@@ -18,6 +18,12 @@ app.use(cors({credentials: true, origin: '*'}));
 
 app.use(express.static(path.join(__dirname, '../static/public/dist')));
 app.use(userSession.getSession());
+/*app.ws('/connection', (ws, req) => {
+  console.log(ws);
+  ws.on('message', (msg) => {
+    ws.send(JSON.stringify({stas: 'stas'}));
+  });
+});*/
 
 app.use('/api', apiRouter);
 
@@ -27,6 +33,7 @@ app.use('/auth/sign-up', staticRouter);
 app.use('/cabinet', staticRouter);
 app.use('/cabinet/user', staticRouter);
 app.use('/cabinet/projects', staticRouter);
+app.use('/cabinet/dashboard/:id', staticRouter);
 
 app.listen(PORT, () =>
 console.log('Express app listening on localhost: ' + PORT));
