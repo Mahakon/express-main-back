@@ -37,4 +37,18 @@ router.get('/getAll', (req, res) => {
     )
 });
 
+router.get('/delete', (req, res) => {
+  bd.deleteProject(req.query.userId, req.query.projectId)
+    .then(
+      value => {
+        console.log(value);
+        res.send({success: 'success'});
+      },
+      err => {
+        console.log(err);
+        res.status(500).send({err: err});
+      }
+    )
+});
+
 module.exports = router;

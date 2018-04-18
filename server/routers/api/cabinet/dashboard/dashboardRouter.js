@@ -4,12 +4,27 @@ const addNewTask = require('./addNewTask');
 const deleteTask = require('./deleteTask');
 const updateTaskDiscription = require('./updateTaskDiscription');
 const updateSatusTask = require('./updateStatusTask');
+const addCommentTask = require('./addCommentTask');
 
 const router = express.Router();
 const expressWs = require('express-ws')(router);
 
 router.get('/get', (req, res) => {
   db.getTasks(req.query.id)
+    .then(
+      value => {
+        console.log(value);
+        res.send(value);
+      },
+      err => {
+        console.log(err);
+        res.status(500).send({err: err})
+      }
+    )
+});
+
+router.get('/getTaskComments', (req, res) => {
+  db.getComments(req.query.id)
     .then(
       value => {
         console.log(value);
@@ -68,6 +83,13 @@ router.ws('/connection/:id', (ws, req) => {
         updateSatusTask(msg.task)
           .then(
             res => next({CHANGE_STATUS: msg.task})
+          )
+      } break;
+
+      case 'ADD_COMMENT': {
+        addCommentTask(msg.comment)
+          .then(
+            comment => next({ADD_COMMENT: comment})
           )
       } break;
     }

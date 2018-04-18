@@ -20,6 +20,7 @@ class DataBase {
     this.conProjectUserTableName = 'project_user';
     this.tasksTableName = 'task';
     this.conTaskProjectTableName = 'task_project';
+    this.commentTableName = 'comment';
   }
 
   getPool() {
@@ -472,6 +473,31 @@ class DataBase {
     })
   };
 
+  deleteProject(userId, projectId) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `DELETE
+                     FROM ${this.conProjectUserTableName}
+                       WHERE project_id=${projectId} AND
+                         user_id=${userId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve("Number of records deleted: " + result.affectedRows);
+        })
+      })
+    })
+  }
+
   getTasks(projectId) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
@@ -485,6 +511,31 @@ class DataBase {
                         LEFT JOIN ${this.conTaskProjectTableName} c
                           ON t.id = c.task_id
                             WHERE c.project_id = ${projectId}`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result);
+          connection.release();
+        })
+      })
+    })
+  };
+
+  getComments(taskId) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `SELECT id, task_id, user_id, content
+                      FROM ${this.commentTableName}
+                        WHERE task_id=${taskId}`;
 
         connection.query(SQL, (err, result) => {
           if (err) {
@@ -543,6 +594,35 @@ class DataBase {
       })
     })
   }
+
+  addComment(comment) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `INSERT INTO
+                       ${this.commentTableName}(task_id, user_id, content)
+                         VALUES (
+                           ${comment.task_id},
+                           ${comment.user_id},
+                           "${comment.content}"
+                         )`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve(result.insertId);
+        })
+      })
+    })
+  }
+
 
   deleteTask(taskId) {
     return new Promise((resolve, reject) => {
