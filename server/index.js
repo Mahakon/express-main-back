@@ -11,19 +11,13 @@ const app = express();
 const expressWs = require('express-ws')(app);
 
 app.set('trust proxy', 1);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({credentials: true, origin: '*'}));
 
 app.use(express.static(path.join(__dirname, '../static/public/dist')));
 app.use(userSession.getSession());
-/*app.ws('/connection', (ws, req) => {
-  console.log(ws);
-  ws.on('message', (msg) => {
-    ws.send(JSON.stringify({stas: 'stas'}));
-  });
-});*/
+
 
 app.use('/api', apiRouter);
 

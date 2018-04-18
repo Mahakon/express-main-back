@@ -11,7 +11,7 @@ class DataBase {
       connectionLimit : 99,
       host            : 'localhost',
       user            : 'root',
-      password        : '9675',
+      password        : 'qwerty',
       database        : 'tinkoff'
     });
 
@@ -20,6 +20,7 @@ class DataBase {
     this.conProjectUserTableName = 'project_user';
     this.tasksTableName = 'task';
     this.conTaskProjectTableName = 'task_project';
+    this.eventsTableName = 'events';
   }
 
   getPool() {
@@ -514,6 +515,8 @@ class DataBase {
                            "${taskStatus}"
                          )`;
 
+
+
         connection.query(SQL, (err, result) => {
           if (err) {
             console.log(err);
@@ -542,6 +545,95 @@ class DataBase {
         })
       })
     })
+  }
+  getEventTask(id){
+      return new Promise((resolve, reject) => {
+          this.pool.getConnection((err, connection) => {
+              if (err) {
+                  console.log(err);
+                  reject(err);
+              }
+                console.log("ID", id);
+              const SQL = `SELECT *
+                      FROM ${this.eventsTableName}
+                            WHERE task_id = "${id}"`;
+
+              connection.query(SQL, (err, result) => {
+                  if (err) {
+                      console.log(err);
+                      reject(err)
+                  }
+
+                  resolve(result);
+                  connection.release();
+              })
+          })
+      })
+  }
+  eventGet(id_project){
+    return new Promise((resolve, reject) => {
+        this.getTasks(id_project).then(
+            value => {
+                if (value.length){
+                    console.log("VALUE", value);
+                    Promise.all(value.map(a => this.getEventTask(a.id))).then(a => {
+                         console.log("Разрезолвилось", a);
+
+                         let k = a.filter(z => z.length).map(z => z[0]);
+                         Promise.all(k.map(z => z.user_id).map(id => this.getUserLogin(id))).then(
+                           q => {
+                               for (let x = 0; x<=q.length; x++) {
+                               //    console.log(k[x],q[x]);
+                               //    k[x]["user"] = q[x];
+                               }
+                               console.log('Ответ',k);
+                               resolve(k);
+                           }
+                         );
+
+
+
+                    }, err => reject(err))
+
+                }else{
+                    resolve([]);
+                }
+            },
+            err => {
+                console.log(err);
+                reject(err);
+            }
+        )
+    });
+  }
+  eventAdd(data){
+      return new Promise((resolve, reject) => {
+          this.pool.getConnection((err, connection) => {
+              if (err) {
+                  console.log(err);
+                  reject(err);
+              }
+                console.log(data);
+              let SQL = `INSERT INTO
+                     ${this.eventsTableName}(action, discription, task_id, status, user_id)
+                       VALUES (
+                            "${data.action}", "${data.task.discription}", "${data.task.taskId}", "${data.task.status}", "${data.task.userId}"
+                       )`;
+                console.log(SQL);
+              connection.query(SQL, (err, result) => {
+                  if (err) {
+                      console.log(err);
+                      reject(err)
+                  }
+                    console.log('result', result);
+                  return this.getUserLogin(data.task.userId).then(user=>
+                      resolve({action: data.action, discription: data.task.discription, taskId: data.task.taskId, status: data.task.status, userId: data.task.userId, userData: user})
+                  );
+
+
+              })
+          })
+      })
   }
 
   deleteTask(taskId) {

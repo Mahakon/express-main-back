@@ -21,7 +21,24 @@ router.get('/get', (req, res) => {
       }
     )
 });
+router.get('/getEvent', (req, res) => {
+    db.eventGet(req.query.id)
+        .then(
+            value => {
+              if (value.length){
+                  res.send(value);
+              }else{
+                  res.send([]);
+              }
 
+
+            },
+            err => {
+                console.log(err);
+                res.status(500).send({err: err})
+            }
+        )
+});
 let connections = [];
 
 router.ws('/connection/:id', (ws, req) => {
@@ -46,28 +63,28 @@ router.ws('/connection/:id', (ws, req) => {
       case 'ADD': {
         addNewTask(curConn.id, msg.task)
           .then(
-            task => next({ADD: task})
+            task => next({ADD: task, event: task.event})
           );
       } break;
 
       case 'DELETE': {
-        deleteTask(msg.task.id)
+        deleteTask(msg.task.id, msg.task)
           .then(
-            res => next({DELETE: msg.task})
+            res => next({DELETE: msg.task, event: res.event})
           )
       } break;
 
       case 'CHANGE_DISCRIPTION': {
         updateTaskDiscription(msg.task)
           .then(
-            res => next({CHANGE_DISCRIPTION: msg.task})
+            res => next({CHANGE_DISCRIPTION: msg.task, event: res.event})
           )
       } break;
 
       case 'CHANGE_STATUS': {
-        updateSatusTask(msg.task)
+        updateSatusTask(msg.task, curConn.id, msg)
           .then(
-            res => next({CHANGE_STATUS: msg.task})
+            res => next({CHANGE_STATUS: msg.task, event: res.event})
           )
       } break;
     }
