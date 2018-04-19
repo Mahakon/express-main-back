@@ -492,7 +492,7 @@ class DataBase {
             reject(err)
           }
 
-          resolve("Number of records deleted: " + result.affectedRows);
+          resolve("Number of records deleted: " + result);
         })
       })
     })
@@ -642,7 +642,7 @@ class DataBase {
             reject(err)
           }
 
-          resolve("Number of records deleted: " + result.affectedRows);
+          resolve("Number of records deleted: " + result);
 
           SQL = `DELETE 
                    FROM ${this.tasksTableName}
@@ -654,7 +654,7 @@ class DataBase {
               reject(err)
             }
 
-            resolve("Number of records deleted: " + result.affectedRows);
+            resolve("Number of records deleted: " + result);
             connection.release();
           })
         })
