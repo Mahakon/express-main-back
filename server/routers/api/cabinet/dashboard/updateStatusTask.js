@@ -1,7 +1,7 @@
 const db = require('../../../../bd/DataBase');
 
 function updateStatusTask(task, conn, msg) {
-    console.log('task', conn, msg);
+   // console.log('task', conn, msg);
   return db.updateTaskStatus(task.id, task.status)
     .then(
       result => {

@@ -12,11 +12,11 @@ router.get('/get', (req, res) => {
   db.getTasks(req.query.id)
     .then(
       value => {
-        console.log(value);
+     //   console.log(value);
         res.send(value);
       },
       err => {
-        console.log(err);
+    //    console.log(err);
         res.status(500).send({err: err})
       }
     )
@@ -34,7 +34,7 @@ router.get('/getEvent', (req, res) => {
 
             },
             err => {
-                console.log(err);
+              //  console.log(err);
                 res.status(500).send({err: err})
             }
         )
@@ -44,12 +44,12 @@ let connections = [];
 router.ws('/connection/:id', (ws, req) => {
   const curConn = {id: req.params.id, ws: ws};
   connections.push(curConn);
-  console.log(connections);
+ // console.log(connections);
   ws.on('message', (msg) => {
     function next(res) {
       connections.forEach((conn) => {
         if (curConn.id == conn.id) {
-          console.log(res);
+         // console.log(res);
           conn.ws.send(JSON.stringify(res));
         }
       })
@@ -58,7 +58,7 @@ router.ws('/connection/:id', (ws, req) => {
     if (typeof msg === 'string') {
       msg = JSON.parse(msg);
     }
-    console.log(msg);
+   // console.log(msg);
     switch (msg.event) {
       case 'ADD': {
         addNewTask(curConn.id, msg.task)
@@ -100,7 +100,7 @@ router.ws('/connection/:id', (ws, req) => {
 
       return true;
     });
-    console.log(connections);
+   // console.log(connections);
   });
 });
 

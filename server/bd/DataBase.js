@@ -59,7 +59,7 @@ class DataBase {
                           resolve(true);
                       });
                   }
-                  console.log(result);
+                //  console.log(result);
                   resolve(true);
               })
           })
@@ -126,7 +126,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -140,7 +140,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+          //  console.log(err);
             reject(err)
           }
 
@@ -155,7 +155,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -165,7 +165,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+        //    console.log(err);
             reject(err)
           }
           if (result.length === 0) {
@@ -183,7 +183,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -193,7 +193,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
           if (result.length === 0) {
@@ -211,7 +211,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+      //    console.log(err);
           reject(err);
         }
 
@@ -226,7 +226,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
 
@@ -241,7 +241,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -257,7 +257,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+        //    console.log(err);
             reject(err)
           }
 
@@ -271,9 +271,9 @@ class DataBase {
   isUserInDB(userId=null) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
-          console.log('userID', userId);
+       //   console.log('userID', userId);
         if (err) {
-          console.log(err);
+      //    console.log(err);
           reject(err);
         }
 
@@ -283,7 +283,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+       //     console.log(err);
             reject(err)
           }
 
@@ -298,7 +298,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -308,7 +308,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
 
@@ -332,7 +332,7 @@ class DataBase {
               //  console.log(SQL);
                 connection.query(SQL, (err, result) => {
                     if (err) {
-                        console.log(err);
+                //        console.log(err);
                         reject(err);
                     }
 
@@ -346,7 +346,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -357,7 +357,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+        //    console.log(err);
             reject(result)
           }
 
@@ -382,12 +382,12 @@ class DataBase {
       //  console.log(SQL);
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
 
           if (result[0] !== undefined) {
-              console.log(userPassword,result[0].password);
+           //   console.log(userPassword,result[0].password);
             if (passwordHash.verify(userPassword, result[0].password)) {
               resolve(result[0].id)
             } else {
@@ -406,7 +406,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+         // console.log(err);
           reject(err);
         }
 
@@ -418,7 +418,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+       //     console.log(err);
             reject(err)
           }
 
@@ -434,7 +434,7 @@ class DataBase {
 
           connection.query(SQL, (err, result) => {
             if (err) {
-              console.log(err);
+          //    console.log(err);
               reject(err)
             }
 
@@ -450,7 +450,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -462,7 +462,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
 
@@ -477,7 +477,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+      //    console.log(err);
           reject(err);
         }
 
@@ -489,7 +489,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
 
@@ -504,7 +504,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -519,7 +519,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+       //     console.log(err);
             reject(err)
           }
 
@@ -535,7 +535,7 @@ class DataBase {
 
           connection.query(SQL, (err, result) => {
             if (err) {
-              console.log(err);
+           //   console.log(err);
               reject(err)
             }
 
@@ -550,17 +550,17 @@ class DataBase {
       return new Promise((resolve, reject) => {
           this.pool.getConnection((err, connection) => {
               if (err) {
-                  console.log(err);
+            //      console.log(err);
                   reject(err);
               }
-                console.log("ID", id);
+             //   console.log("ID", id);
               const SQL = `SELECT *
                       FROM ${this.eventsTableName}
                             WHERE task_id = "${id}"`;
 
               connection.query(SQL, (err, result) => {
                   if (err) {
-                      console.log(err);
+                //      console.log(err);
                       reject(err)
                   }
 
@@ -572,60 +572,48 @@ class DataBase {
   }
   eventGet(id_project){
     return new Promise((resolve, reject) => {
-        this.getTasks(id_project).then(
-            value => {
-                if (value.length){
-                    console.log("VALUE", value);
-                    Promise.all(value.map(a => this.getEventTask(a.id))).then(a => {
-                         console.log("Разрезолвилось", a);
-
-                         let k = a.filter(z => z.length).map(z => z[0]);
-                         Promise.all(k.map(z => z.user_id).map(id => this.getUserLogin(id))).then(
-                           q => {
-                               for (let x = 0; x<=q.length; x++) {
-                               //    console.log(k[x],q[x]);
-                               //    k[x]["user"] = q[x];
-                               }
-                               console.log('Ответ',k);
-                               resolve(k);
-                           }
-                         );
-
-
-
-                    }, err => reject(err))
-
+        this.getTasks(id_project).then(result => {
+                if (result.length) {
+                    return Promise.all(result.map(a => this.getEventTask(a.id)));
                 }else{
                     resolve([]);
                 }
-            },
-            err => {
-                console.log(err);
-                reject(err);
-            }
-        )
+            })
+            .then(result => {
+                let k = [];
+                result.filter(z => z.length).forEach(ell => ell.forEach(ell1 => k.push(ell1)));
+                Promise.all(k.map(z => z.user_id).map(id => this.getUserLogin(id))).then(r => {
+                        const result_arr = k.map((currentValue, index) => {
+                            currentValue.userData = r[index];
+                            return currentValue;
+                        });
+                        resolve(result_arr);
+                    }
+                );
+            })
+            .catch(err => reject(err));
     });
   }
   eventAdd(data){
       return new Promise((resolve, reject) => {
           this.pool.getConnection((err, connection) => {
               if (err) {
-                  console.log(err);
+                //  console.log(err);
                   reject(err);
               }
-                console.log(data);
+             //   console.log(data);
               let SQL = `INSERT INTO
                      ${this.eventsTableName}(action, discription, task_id, status, user_id)
                        VALUES (
                             "${data.action}", "${data.task.discription}", "${data.task.taskId}", "${data.task.status}", "${data.task.userId}"
                        )`;
-                console.log(SQL);
+          //      console.log(SQL);
               connection.query(SQL, (err, result) => {
                   if (err) {
-                      console.log(err);
+                   //   console.log(err);
                       reject(err)
                   }
-                    console.log('result', result);
+                //    console.log('result', result);
                   return this.getUserLogin(data.task.userId).then(user=>
                       resolve({action: data.action, discription: data.task.discription, taskId: data.task.taskId, status: data.task.status, userId: data.task.userId, userData: user})
                   );
@@ -640,7 +628,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+       //   console.log(err);
           reject(err);
         }
 
@@ -650,7 +638,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+           // console.log(err);
             reject(err)
           }
 
@@ -662,7 +650,7 @@ class DataBase {
 
           connection.query(SQL, (err, result) => {
             if (err) {
-              console.log(err);
+          //    console.log(err);
               reject(err)
             }
 
@@ -678,7 +666,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+        //  console.log(err);
           reject(err);
         }
 
@@ -688,7 +676,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+         //   console.log(err);
             reject(err)
           }
 
@@ -702,7 +690,7 @@ class DataBase {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
-          console.log(err);
+        //  console.log(err);
           reject(err);
         }
 
@@ -712,7 +700,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-            console.log(err);
+        //    console.log(err);
             reject(err)
           }
 
@@ -724,7 +712,7 @@ class DataBase {
 
   close() {
     this.pool.end(function (err) {
-      console.log(err);
+   //   console.log(err);
       return err;
     });
   }
