@@ -179,6 +179,34 @@ class DataBase {
     })
   }
 
+  getBitbucketByUserId(userId = null) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        const SQL = `SELECT bitbucket, refresh_token
+                      FROM ${this.usersTableName}
+                        WHERE id="${userId}"`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+          if (result.length === 0) {
+            resolve(undefined)
+          } else {
+            resolve(result[0])
+          }
+          connection.release();
+        })
+      })
+    })
+  }
+
   getUserIdByBitbucket(bitbucket = null) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
@@ -237,7 +265,7 @@ class DataBase {
     })
   }
 
-  addBitbucketUser(login = null, bitbucket = null) {
+  addBitbucketUser(login = null, bitbucket = null, refreshToken = null) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
@@ -246,13 +274,14 @@ class DataBase {
         }
 
         const SQL = `INSERT INTO
-                       ${this.usersTableName}(login, email, password, vk, bitbucket)
+                       ${this.usersTableName}(login, email, password, vk, bitbucket, refresh_token)
                          VALUES (
                            "${login}", 
                            NULL, 
                            NULL,
                            NULL,
-                           "${bitbucket}"
+                           "${bitbucket}",
+                           "${refreshToken}"
                          )`;
 
         connection.query(SQL, (err, result) => {
@@ -680,7 +709,7 @@ class DataBase {
             reject(err)
           }
 
-          resolve("Number of records change discription: " + result.affectedRows);
+          resolve("Number of records change discription: " + result);
         })
       })
     })
@@ -704,7 +733,31 @@ class DataBase {
             reject(err)
           }
 
-          resolve("Number of records change discription: " + result.affectedRows);
+          resolve("Number of records change discription: " + result);
+        })
+      })
+    })
+  }
+
+  refreshToken(bitbucket, refreshToken) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `UPDATE ${this.usersTableName} 
+                     SET  refresh_token="${refreshToken}" 
+                       WHERE bitbucket="${bitbucket}"`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve("Number of records change discription: " + result);
         })
       })
     })

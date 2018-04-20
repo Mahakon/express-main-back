@@ -26,8 +26,10 @@ router.get('/', (req, res, next) => {
   fetch(url, options)
     .then(ans => ans.json())
     .then(data => {
+      console.log(data);
       const url = `https://api.bitbucket.org/1.0/user?` +
                    `access_token=${data.access_token}`;
+      req.refreshToken = data.refresh_token;
 
       return fetch(url);
     })
@@ -40,7 +42,7 @@ router.get('/', (req, res, next) => {
     )
     .then(
       data => {
-        console.log(data.user.username);
+        console.log(data);
         req.userName = data.user.username;
         next('route');
       }
@@ -58,7 +60,7 @@ const newBitbucketUser = function (req, res, next) {
           next();
         }
 
-        return bd.addBitbucketUser(req.userName, req.userName);
+        return bd.addBitbucketUser(req.userName, req.userName, req.refreshToken);
       },
       err => {
         console.log(err);
