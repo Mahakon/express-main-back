@@ -5,17 +5,22 @@ const bitprojectsRouter = require('./bitProjectsRouter');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const config = require('../../sign/bitbucket/config');
+const addNewTask = require('../dashboard/addNewTask');
 
 const upload = multer();
 const router = express.Router();
-const parseServerHost = 'https://031adad2.ngrok.io/?';
+const parseServerHost = 'https://ecae3114.ngrok.io/?';
 
 router.use('/bitbucket', bitprojectsRouter);
 
 router.post('/add', upload.fields([]), (req, res, next) => {
   const project = req.body;
 
-  bd.addProject(project.userId, project.title)
+  bd.addProject(project.userId,
+                project.title,
+                project.acountname,
+                project.slug,
+                project.branch)
     .then(
       id => {
         if (project.acountname === undefined) {
@@ -29,6 +34,7 @@ router.post('/add', upload.fields([]), (req, res, next) => {
           req.acountname = project.acountname;
           req.slug = project.slug;
           req.userId = project.userId;
+          req.branch = project.branch;
           next();
         }
 
@@ -82,9 +88,12 @@ router.post('/add', upload.fields([]), (req, res, next) => {
         const url = `${parseServerHost}` +
           `access_token=${req.accessToken}&` +
             `acountname=${req.acountname}&` +
-              `slug=${req.slug}`;
+              `slug=${req.slug}&` +
+                `branch=${req.branch}`;
 
-        return fetch(url);
+        return fetch(url, {
+          headers: {'Content-Type':'application/json'},
+        });
       },
       err => {
         console.log(err);
@@ -92,9 +101,27 @@ router.post('/add', upload.fields([]), (req, res, next) => {
       }
     )
     .then(
+      ans => ans.json()
+    )
+    .then(
       tasks => {
-        console.log(tasks);
-        res.send(tasks);
+        let arr = [];
+        tasks.forEach(task => {
+          arr.push(addNewTask(req.projectId, task))
+        });
+        Promise.all(arr)
+          .then(
+            success => {
+              res.send({
+                id: req.projectId,
+                title: req.projectTitle
+              });
+            },
+            err => {
+              console.log(err);
+              res.status(500).send({err: err});
+            }
+          )
       },
       err => {
         console.log(err);

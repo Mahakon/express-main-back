@@ -431,7 +431,11 @@ class DataBase {
     })
   }
 
-  addProject(userId, title) {
+  addProject(userId, title, acountname = null, slug = null, branch = null) {
+    acountname = (acountname === undefined)? null : acountname;
+    slug = (slug === undefined)? null : slug;
+    branch = (branch === undefined)? null : branch;
+
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
@@ -440,9 +444,12 @@ class DataBase {
         }
 
         let SQL = `INSERT INTO
-                       ${this.projectsTableName}(title)
+                       ${this.projectsTableName}(title, acountname, slug, branch)
                          VALUES (
-                           "${title}"
+                           "${title}",
+                           "${acountname}",
+                           "${slug}",
+                           "${branch}"
                          )`;
 
         connection.query(SQL, (err, result) => {
