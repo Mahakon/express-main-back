@@ -196,7 +196,7 @@ class DataBase {
             console.log(err);
             reject(err)
           }
-          if (result.length === 0) {
+          if (result.length === 0 || result[0] === null) {
             resolve(undefined)
           } else {
             resolve(result[0])
@@ -431,19 +431,17 @@ class DataBase {
     })
   }
 
-  addProject(userId, title, acountname = null, slug = null, branch = null) {
-    acountname = (acountname === undefined)? null : acountname;
-    slug = (slug === undefined)? null : slug;
-    branch = (branch === undefined)? null : branch;
-
+  addProject(userId, title, acountname, slug, branch) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
           console.log(err);
           reject(err);
         }
-
-        let SQL = `INSERT INTO
+        let SQL;
+        console.log('acount' + acountname)
+        if (acountname !== undefined) {
+          SQL = `INSERT INTO
                        ${this.projectsTableName}(title, acountname, slug, branch)
                          VALUES (
                            "${title}",
@@ -451,6 +449,13 @@ class DataBase {
                            "${slug}",
                            "${branch}"
                          )`;
+        } else {
+          SQL = `INSERT INTO
+                       ${this.projectsTableName}(title)
+                         VALUES (
+                           "${title}"
+                         )`;
+        }
 
         connection.query(SQL, (err, result) => {
           if (err) {
@@ -542,7 +547,7 @@ class DataBase {
           reject(err);
         }
 
-        const SQL = `SELECT t.id, t.discription, t.status
+        const SQL = `SELECT t.id, t.discription, t.status, t.filename_hash
                       FROM ${this.tasksTableName} t
                         LEFT JOIN ${this.conTaskProjectTableName} c
                           ON t.id = c.task_id
@@ -586,7 +591,8 @@ class DataBase {
     })
   };
 
-  addTask(projectId, taskDiscription, taskStatus) {
+  addTask(projectId, taskDiscription, taskStatus, commentHash) {
+
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
@@ -594,12 +600,24 @@ class DataBase {
           reject(err);
         }
 
-        let SQL = `INSERT INTO
+        let SQL;
+
+        if (commentHash !== undefined) {
+          SQL = `INSERT INTO
+                       ${this.tasksTableName}(discription, status, filename_hash)
+                         VALUES (
+                           "${taskDiscription}",
+                           "${taskStatus}",
+                           "${commentHash}"
+                         )`;
+        } else {
+          SQL = `INSERT INTO
                        ${this.tasksTableName}(discription, status)
                          VALUES (
                            "${taskDiscription}",
                            "${taskStatus}"
                          )`;
+        }
 
         connection.query(SQL, (err, result) => {
           if (err) {
@@ -765,6 +783,33 @@ class DataBase {
           }
 
           resolve("Number of records change discription: " + result);
+        })
+      })
+    })
+  }
+
+  getDataProjectOnBitbucket(projectId) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `SELECT acountname, slug, branch FROM ${this.projectsTableName} 
+                     WHERE id="${projectId}"`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          if (result[0].acountname === null ) {
+            resolve(undefined)
+          } else {
+            resolve(result[0]);
+          }
         })
       })
     })

@@ -9,7 +9,7 @@ const addNewTask = require('../dashboard/addNewTask');
 
 const upload = multer();
 const router = express.Router();
-const parseServerHost = 'https://ecae3114.ngrok.io/?';
+const parseServerHost = 'https://0a7455b8.ngrok.io/?';
 
 router.use('/bitbucket', bitprojectsRouter);
 

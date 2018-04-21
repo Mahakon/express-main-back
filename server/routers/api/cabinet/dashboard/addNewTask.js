@@ -1,6 +1,6 @@
 const db = require('../../../../bd/DataBase');
 function addNewTask(projectId, task) {
-  return db.addTask(projectId, task.discription, task.status)
+  return db.addTask(projectId, task.discription, task.status, task.commentHash)
     .then(
       taskId => {
         return {

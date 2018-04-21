@@ -7,10 +7,12 @@ const fetch = require('node-fetch');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
+  console.log('here' + req.query.id)
   console.log(req.query.id);
   bd.getBitbucketByUserId(req.query.id)
     .then(
       data => {
+        console.log(data);
         if (data !== undefined) {
           req.bitbucket = data.bitbucket;
           req.refreshToken = data.refresh_token;
@@ -142,7 +144,7 @@ router.get('/getbranches', (req, res, next) => {
     )
     .then(
       data => {
-        //console.log(reps);
+        console.log(data);
         branches = Object.keys(data);
         console.log(branches);
         res.send(branches);
