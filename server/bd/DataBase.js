@@ -815,6 +815,30 @@ class DataBase {
     })
   }
 
+  addBitbucketToCurAcount(userId, bitbucket, refreshToken) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        let SQL = `UPDATE ${this.usersTableName} 
+                     SET  bitbucket="${bitbucket}", refresh_token="${refreshToken}" 
+                       WHERE id="${userId}"`;
+
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          }
+
+          resolve("Number of records change discription: " + result);
+        })
+      })
+    })
+  }
+
   close() {
     this.pool.end(function (err) {
       console.log(err);

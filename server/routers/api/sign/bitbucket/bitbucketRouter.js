@@ -53,30 +53,47 @@ router.get('/', (req, res, next) => {
 });
 
 const newBitbucketUser = function (req, res, next) {
-  bd.getUserIdByBitbucket(req.userName)
-    .then(
-      id => {
-        if (id === undefined) {
+  if (req.session.user_id === undefined) {
+    bd.getUserIdByBitbucket(req.userName)
+      .then(
+        id => {
+          if (id === undefined) {
+            next();
+          }
+
+          return bd.addBitbucketUser(req.userName, req.userName, req.refreshToken);
+        },
+        err => {
+          console.log(err);
           next();
         }
-
-        return bd.addBitbucketUser(req.userName, req.userName, req.refreshToken);
-      },
-      err => {
-        console.log(err);
-        next();
-      }
+      )
+      .then(
+        id => {
+          req.session.user_id = id;
+          next();
+        },
+        err => {
+          console.log(err);
+          next();
+        }
+      )
+  } else {
+    bd.addBitbucketToCurAcount(
+      req.session.user_id,
+      req.userName,
+      req.refreshToken
     )
-    .then(
-      id => {
-        req.session.user_id = id;
-        next();
-      },
-      err => {
-        console.log(err);
-        next();
-      }
-    )
+      .then(
+        success => {
+          next();
+        },
+        err => {
+          console.log(err);
+          next();
+        }
+      )
+  }
 };
 
 router.use(newBitbucketUser, (req, res, next) => {

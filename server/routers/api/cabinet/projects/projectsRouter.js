@@ -9,7 +9,6 @@ const addNewTask = require('../dashboard/addNewTask');
 
 const upload = multer();
 const router = express.Router();
-const parseServerHost = 'https://0a7455b8.ngrok.io/?';
 
 router.use('/bitbucket', bitprojectsRouter);
 
@@ -85,7 +84,7 @@ router.post('/add', upload.fields([]), (req, res, next) => {
     .then(
       success => {
         console.log('success update refresh_token');
-        const url = `${parseServerHost}` +
+        const url = `${config.parseServerHost}` +
           `access_token=${req.accessToken}&` +
             `acountname=${req.acountname}&` +
               `slug=${req.slug}&` +

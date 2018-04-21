@@ -8,7 +8,6 @@ const addCommentTask = require('./addCommentTask');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const config = require('../../sign/bitbucket/config');
-const parseServerHost = 'https://0a7455b8.ngrok.io/?';
 
 const router = express.Router();
 const expressWs = require('express-ws')(router);
@@ -192,7 +191,7 @@ router.use(addExtraTasks, (req, res, next) => {
     .then(
       tasks => {
         console.log('success update refresh_token');
-        const url = `${parseServerHost}` +
+        const url = `${config.parseServerHost}` +
           `access_token=${req.accessToken}&` +
           `acountname=${req.acountname}&` +
           `slug=${req.slug}&` +
