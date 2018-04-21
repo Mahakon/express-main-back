@@ -39,6 +39,55 @@ router.get('/getEvent', (req, res) => {
             }
         )
 });
+
+
+// Методы для шаринга
+/**
+ * @description Метод для перегенерации ссылки
+ *
+ * @GET
+ * @param {number} - project_id - id проекта
+ */
+router.get('/share/update', (req, res) => {
+    db.generateStringUrlToShare(req.query.project_id).then(
+        value => {
+            res.status(200).send(value);
+        },
+        err => res.status(500).send({err: err})
+    );
+});
+
+/**
+ * @description Метод для получения ссылки
+ *
+ * @GET
+ * @param {number} - project_id - id проекта
+ */
+router.get('/share/get', (req, res) => {
+    db.getStringUrlToShare(req.query.project_id).then(
+        value => {
+            res.status(200).send({code: value.share_link});
+        },
+        err => res.status(500).send({err: err})
+    );
+});
+
+/**
+ * @description Метод для получения пользователей
+ *
+ * @GET
+ * @param {number} - project_id - id проекта
+ */
+router.get('/members/get', (req, res) => {
+    db.getMembers(req.query.project_id).then(
+        value => {
+            res.status(200).send({members: value, connections: connections});
+        },
+        err => res.status(500).send({err: err})
+    );
+});
+
+
 let connections = [];
 
 router.ws('/connection/:id', (ws, req) => {

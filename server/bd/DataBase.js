@@ -8,7 +8,7 @@ const path = require('path');
 class DataBase {
   constructor() {
     this.pool  = mysql.createPool({
-      connectionLimit : 99,
+      connectionLimit : 990,
       host            : 'localhost',
       user            : 'root',
       password        : 'qwerty',
@@ -308,8 +308,7 @@ class DataBase {
 
         connection.query(SQL, (err, result) => {
           if (err) {
-         //   console.log(err);
-            reject(err)
+            reject(err);
           }
 
           resolve([result[0].login, result[0].name, result[0].surname, result[0].avatar])
@@ -484,7 +483,7 @@ class DataBase {
         const SQL = `SELECT t.id, t.discription, t.status
                       FROM ${this.tasksTableName} t
                         LEFT JOIN ${this.conTaskProjectTableName} c
-                          ON t.id = c.task_id
+                          ON t.id = c.task_id and t.delete = "0"
                             WHERE c.project_id = ${projectId}`;
 
         connection.query(SQL, (err, result) => {
@@ -499,6 +498,36 @@ class DataBase {
       })
     })
   };
+
+  /*
+    Получаем все таски когда либо созданые
+  */
+  getTasksForEvnts(projectId) {
+        return new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    //    console.log(err);
+                    reject(err);
+                }
+
+                const SQL = `SELECT t.id, t.discription, t.status
+                      FROM ${this.tasksTableName} t
+                        LEFT JOIN ${this.conTaskProjectTableName} c
+                          ON t.id = c.task_id
+                            WHERE c.project_id = ${projectId}`;
+
+                connection.query(SQL, (err, result) => {
+                    if (err) {
+                        //   console.log(err);
+                        reject(err)
+                    }
+
+                    resolve(result);
+                    connection.release();
+                })
+            })
+        })
+    };
 
   addTask(projectId, taskDiscription, taskStatus) {
     return new Promise((resolve, reject) => {
@@ -572,7 +601,7 @@ class DataBase {
   }
   eventGet(id_project){
     return new Promise((resolve, reject) => {
-        this.getTasks(id_project).then(result => {
+        this.getTasksForEvnts(id_project).then(result => {
                 if (result.length) {
                     return Promise.all(result.map(a => this.getEventTask(a.id)));
                 }else{
@@ -624,6 +653,100 @@ class DataBase {
       })
   }
 
+    /**
+     * @description Получаем ссылку для проекта
+     * @param project_id
+     *
+     */
+  getStringUrlToShare(project_id){
+      return new Promise((resolve,  reject) => {
+          this.pool.getConnection((err, connection) => {
+              if (err) {
+                  reject(err);
+              }
+              //Формируем запрос к таблице
+              let SQL = `SELECT share_link FROM ${this.projectsTableName} WHERE  id=${project_id}`;
+              connection.query(SQL, (err, result) => {
+                  if (err) {
+                      reject(err)
+                  }
+                 // console.log(result[0].share_link);
+                  if (result[0].share_link !== '///')
+                    resolve(result[0]);
+                  else{
+                      this.generateStringUrlToShare(project_id).then(result => {
+                          resolve(result);
+                          console.log(result);
+                      }).catch(err => reject(err));
+                  }
+                  connection.release();
+              });
+          });
+      });
+  }
+  /**
+   * @description Генерируеи ссылку
+   * Math.random().toString(36).substr(2)
+   * Генерируем ссылку и пишем ее а таблицу проектов
+   *
+   * @param {numer] project_id - id проекта для шаринга
+   *
+   */
+  generateStringUrlToShare(project_id) {
+    return new Promise((resolve, reject) => {
+        this.pool.getConnection((err, connection) => {
+            if (err) {
+                reject(err);
+            }
+            //Генерируем последовательность
+            const code = Math.random().toString(36).substr(2);
+            const share_link = "`share_link` = '" + code +"'";
+            //Формируем запрос к таблице
+            let SQL = `UPDATE ${this.projectsTableName} SET ${share_link} WHERE  id=${project_id}`;
+     //       console.log(SQL);
+            connection.query(SQL, (err, result) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve(result);
+                connection.release();
+            });
+        });
+    });
+  }
+
+    /**
+     * @description Получение юзеров в проекте
+     * @param {numer] project_id - id проекта для шаринга
+     * @returns {Promise<any>}
+     */
+    getMembers(project_id) {
+        return new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    reject(err);
+                }
+                let SQL = `SELECT user_id FROM ${this.conProjectUserTableName} WHERE project_id = ${project_id}`;
+                connection.query(SQL, (err, result) => {
+                    if (err) {
+                        reject(err)
+                    }
+
+                    Promise.all(result.map(z => z.user_id).map(id => this.getUserLogin(id))).then(r => {
+                            const result_arr = result.map((currentValue, index) => {
+                                currentValue.userData = r[index];
+                                return currentValue;
+                            });
+                            resolve(result_arr);
+                        }
+                    );
+
+                    connection.release();
+                });
+            });
+        });
+    }
+
   deleteTask(taskId) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
@@ -632,22 +755,22 @@ class DataBase {
           reject(err);
         }
 
-        let SQL = `DELETE
-                     FROM ${this.conTaskProjectTableName}
+          let SQL = `UPDATE ${this.conTaskProjectTableName} 
+                     SET  ` + '`delete`' + `='1' 
                        WHERE task_id=${taskId}`;
-
+        console.log('First', SQL);
         connection.query(SQL, (err, result) => {
           if (err) {
            // console.log(err);
             reject(err)
           }
-
+            console.log(result);
           resolve("Number of records deleted: " + result.affectedRows);
 
-          SQL = `DELETE 
-                   FROM ${this.tasksTableName}
-                     WHERE id=${taskId}`;
-
+          SQL = `UPDATE ${this.tasksTableName} 
+                     SET  ` + '`delete`' + `='1' 
+                       WHERE id=${taskId}`;
+            console.log('Second', SQL);
           connection.query(SQL, (err, result) => {
             if (err) {
           //    console.log(err);
