@@ -28,6 +28,7 @@ app.use('/cabinet', staticRouter);
 app.use('/cabinet/user', staticRouter);
 app.use('/cabinet/projects', staticRouter);
 app.use('/cabinet/dashboard/:id', staticRouter);
+app.use('/share/:code', staticRouter);
 
 app.listen(PORT, () =>
 console.log('Express app listening on localhost: ' + PORT));

@@ -105,6 +105,12 @@ router.post('/add', upload.fields([]), (req, res, next) => {
     .then(
       tasks => {
         let arr = [];
+        tasks = tasks.map(task => {
+          return {
+            ...task,
+            userId: req.userId
+          }
+        });
         tasks.forEach(task => {
           arr.push(addNewTask(req.projectId, task))
         });

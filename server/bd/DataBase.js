@@ -11,7 +11,7 @@ class DataBase {
       connectionLimit : 990,
       host            : 'localhost',
       user            : 'root',
-      password        : 'qwerty',
+      password        : '9675',
       database        : 'tinkoff'
     });
 
@@ -673,7 +673,7 @@ class DataBase {
               reject(err)
             }
 
-            resolve(projectId);
+            resolve(taskId);
             connection.release();
           })
         })
@@ -756,6 +756,45 @@ class DataBase {
               })
           })
       })
+  }
+
+  addProjectAddUser(code, id) {
+    console.log(code);
+    return new Promise((resolve, reject) => {
+
+      this.pool.getConnection((err, connection) => {
+        if (err) {
+          reject(err);
+        }
+        let SQL = `SELECT id FROM ${this.projectsTableName} WHERE share_link = '${code}'`;
+        connection.query(SQL, (err, result) => {
+          if (err) {
+            reject(err)
+          }
+          if (result[0].id){
+            const SQL = `INSERT INTO
+          ${this.conProjectUserTableName}()
+            VALUES (
+              "${result[0].id}", 
+              "${id}"
+            )`;
+
+            connection.query(SQL, (err, result) => {
+              if (err) {
+                reject(err)
+              }
+
+              resolve(result);
+            })
+          }else{
+            if (err) {
+              reject('ссылка не действительна');
+            }
+          }
+          connection.release();
+        });
+      });
+    });
   }
 
     /**

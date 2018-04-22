@@ -27,7 +27,7 @@ router.get('/getTaskComments', (req, res) => {
     )
 });
 router.get('/getEvent', (req, res) => {
-    db.eventGet(req.query.id)
+    bd.eventGet(req.query.id)
         .then(
             value => {
               if (value.length){
@@ -54,7 +54,7 @@ router.get('/getEvent', (req, res) => {
  * @param {number} - project_id - id проекта
  */
 router.get('/share/update', (req, res) => {
-    db.generateStringUrlToShare(req.query.project_id).then(
+    bd.generateStringUrlToShare(req.query.project_id).then(
         value => {
             res.status(200).send(value);
         },
@@ -69,7 +69,7 @@ router.get('/share/update', (req, res) => {
  * @param {number} - project_id - id проекта
  */
 router.get('/share/get', (req, res) => {
-    db.getStringUrlToShare(req.query.project_id).then(
+    bd.getStringUrlToShare(req.query.project_id).then(
         value => {
             res.status(200).send({code: value.share_link});
         },
@@ -84,12 +84,28 @@ router.get('/share/get', (req, res) => {
  * @param {number} - project_id - id проекта
  */
 router.get('/members/get', (req, res) => {
-    db.getMembers(req.query.project_id).then(
+    bd.getMembers(req.query.project_id).then(
         value => {
             res.status(200).send({members: value, connections: connections});
         },
         err => res.status(500).send({err: err})
     );
+});
+
+router.get('/share/addUser/:code', (req, res) => {
+  if (req.params.code) {
+    bd.addProjectAddUser(req.params.code, req.query.id)
+      .then(
+        value => {
+          console.log(value);
+          res.send(value)
+        },
+        err => {
+          console.log(err);
+          res.status(500).send({err: err})
+        }
+      )
+  }
 });
 
 
