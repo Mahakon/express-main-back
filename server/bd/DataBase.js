@@ -11,7 +11,8 @@ class DataBase {
       connectionLimit : 990,
       host            : 'localhost',
       user            : 'root',
-      password        : '9675',
+     // password        : '9675',
+      password        : 'qwerty',
       database        : 'tinkoff'
     });
 
@@ -852,7 +853,7 @@ class DataBase {
                 if (err) {
                     reject(err)
                 }
-                resolve(result);
+                resolve(code);
                 connection.release();
             });
         });
