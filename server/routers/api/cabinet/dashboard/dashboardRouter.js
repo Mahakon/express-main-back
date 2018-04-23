@@ -86,7 +86,8 @@ router.get('/share/get', (req, res) => {
 router.get('/members/get', (req, res) => {
     bd.getMembers(req.query.project_id).then(
         value => {
-            res.status(200).send({members: value, connections: connections});
+            console.log('Members', value);
+            res.status(200).send({members: value});
         },
         err => res.status(500).send({err: err})
     );
