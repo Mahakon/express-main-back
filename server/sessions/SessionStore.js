@@ -12,7 +12,7 @@ class SessionStore {
       host: 'localhost',
       port: 3306,
       user: 'root',
-      password: '9675',
+      password: 'qwerty',
       database: 'tinkoff',
       schema: {
         tableName: 'sessions',
