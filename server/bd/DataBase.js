@@ -11,7 +11,8 @@ class DataBase {
       connectionLimit : 990,
       host            : 'localhost',
       user            : 'root',
-      password        : '9675',
+     // password        : '9675',
+      password        : 'qwerty',
       database        : 'tinkoff'
     });
 
@@ -341,7 +342,8 @@ class DataBase {
             reject(err);
           }
 
-          resolve([result[0].login, result[0].name, result[0].surname, result[0].avatar])
+          resolve([result[0].login, result[0].name, result[0].surname, result[0].avatar]);
+          connection.release();
         })
       })
     })
@@ -366,6 +368,7 @@ class DataBase {
                     }
 
                     resolve(!!result.length);
+                    connection.release();
                 })
             });
         });
@@ -852,7 +855,7 @@ class DataBase {
                 if (err) {
                     reject(err)
                 }
-                resolve(result);
+                resolve(code);
                 connection.release();
             });
         });
