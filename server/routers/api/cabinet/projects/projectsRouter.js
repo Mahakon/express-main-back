@@ -88,7 +88,8 @@ router.post('/add', upload.fields([]), (req, res, next) => {
           `access_token=${req.accessToken}&` +
             `acountname=${req.acountname}&` +
               `slug=${req.slug}&` +
-                `branch=${req.branch}`;
+                `branch=${req.branch}&` +
+                  `tasks=${JSON.stringify([])}`;
 
         return fetch(url, {
           headers: {'Content-Type':'application/json'},
@@ -105,12 +106,6 @@ router.post('/add', upload.fields([]), (req, res, next) => {
     .then(
       tasks => {
         let arr = [];
-        tasks = tasks.map(task => {
-          return {
-            ...task,
-            userId: req.userId
-          }
-        });
         tasks.forEach(task => {
           arr.push(addNewTask(req.projectId, task))
         });

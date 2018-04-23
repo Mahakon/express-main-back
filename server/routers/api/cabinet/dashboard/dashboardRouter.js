@@ -227,8 +227,10 @@ const addExtraTasks = function (req, res, next) {
     .then(
       data => {
         if (data !== undefined) {
-          req.bitbucket = data.bitbucket;
-          req.refreshToken = data.refresh_token;
+          console.log(data);
+            console.log('work');
+            req.bitbucket = data.bitbucket;
+            req.refreshToken = data.refresh_token;
           next();
         } else {
           res.status(404).send({err: 'not found'})
@@ -245,82 +247,90 @@ router.use(addExtraTasks, (req, res, next) => {
   const url = `https://bitbucket.org/site/oauth2/access_token`;
   let form = new FormData();
 
-  form.append('client_id', config.key);
-  form.append('client_secret', config.secret);
-  form.append('grant_type', 'refresh_token');
-  form.append('refresh_token', req.refreshToken);
 
-  const options = {
-    method: 'POST',
-    body: form
-  };
+  if (req.refreshToken === null) {
+    console.log(req.refreshToken);
+    next();
+  } else {
+    form.append('client_id', config.key);
+    form.append('client_secret', config.secret);
+    form.append('grant_type', 'refresh_token');
+    form.append('refresh_token', req.refreshToken);
 
-  fetch(url, options)
-    .then(ans => ans.json())
-    .then(data => {
-      console.log(data);
-      req.accessToken = data.access_token;
-      return bd.refreshToken(req.bitbucket, data.refresh_token);
-    })
-    .then(
-      success => {
-        return bd.getTasks(req.query.id)
-      },
-      err => {
-        console.log(err);
-        res.status(500).send({err: err})
-      }
-    )
-    .then(
-      tasks => {
-        console.log('success update refresh_token');
-        const url = `${config.parseServerHost}` +
-          `access_token=${req.accessToken}&` +
-          `acountname=${req.acountname}&` +
-          `slug=${req.slug}&` +
-          `branch=${req.branch}&` +
-          `tasks=${JSON.stringify(tasks)}`;
+    const options = {
+      method: 'POST',
+      body: form
+    };
 
-        return fetch(url, {
-          headers: {'Content-Type':'application/json'},
-        });
-      },
-      err => {
-        console.log(err);
-        res.status(500).send({err: err});
-      }
-    )
-    .then(
-      ans => ans.json()
-    )
-    .then(
-      tasks => {
-        console.log(tasks);
-        let arr = [];
-        tasks.forEach(task => {
-          arr.push(addNewTask(req.query.id, task))
-        });
-        return Promise.all(arr)
-      },
-      err => {
-        console.log(err);
-        res.status(500).send({err: err});
-      }
-    )
-    .then(
-      success => {
-        next();
-      },
-      err => {
-        console.log(err);
-        res.status(500).send({err: err});
-      }
-    )
+    fetch(url, options)
+      .then(ans => ans.json())
+      .then(data => {
+        console.log(data);
+        req.accessToken = data.access_token;
+        return bd.refreshToken(req.bitbucket, data.refresh_token);
+      })
+      .then(
+        success => {
+          return bd.getTasks(req.query.id)
+        },
+        err => {
+          console.log(err);
+          next();
+          //res.status(500).send({err: err})
+        }
+      )
+      .then(
+        tasks => {
+          console.log('success update refresh_token');
+          console.log(tasks);
+          const url = `${config.parseServerHost}` +
+            `access_token=${req.accessToken}&` +
+            `acountname=${req.acountname}&` +
+            `slug=${req.slug}&` +
+            `branch=${req.branch}&` +
+            `tasks=${JSON.stringify(tasks)}`;
+
+          return fetch(url, {
+            headers: {'Content-Type': 'application/json'},
+          });
+        },
+        err => {
+          console.log(err);
+          res.status(500).send({err: err});
+        }
+      )
+      .then(
+        ans => ans.json()
+      )
+      .then(
+        tasks => {
+          console.log(tasks);
+          let arr = [];
+          tasks.forEach(task => {
+            arr.push(addNewTask(req.query.id, task))
+          });
+          return Promise.all(arr)
+        },
+        err => {
+          console.log(err);
+          res.status(500).send({err: err});
+        }
+      )
+      .then(
+        success => {
+          next();
+        },
+        err => {
+          console.log(err);
+          res.status(500).send({err: err});
+        }
+      )
+  }
 }, (req, res) => {
   bd.getTasks(req.query.id)
     .then(
       value => {
-        console.log(value);
+        console.log(value + 'gfx');
         value = value.map(v => {
           return {
             id: v.id,
