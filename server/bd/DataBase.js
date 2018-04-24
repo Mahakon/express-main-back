@@ -11,7 +11,7 @@
         connectionLimit : 990,
         host            : 'localhost',
         user            : 'root',
-        password        : 'qwerty',
+        password        : '9675',
         //password        : 'qwerty',
         database        : 'tinkoff'
       });

@@ -7,7 +7,7 @@ function updateStatusTask(task, conn, msg) {
       result => {
 
           task.taskId = task.id;
-          
+          console.log('task' + task);
           if (!task.userId) {
             task.userId = 200;
           }
