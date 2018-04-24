@@ -6,7 +6,7 @@ function addNewTask(projectId, task) {
         console.log(taskId);
           task.taskId = taskId;
           if (!task.userId) {
-            task.userId = 207;
+            task.userId = 200;
           }
           return db.eventAdd({task: task, action: 'ADD'}).then(a => {
               return {

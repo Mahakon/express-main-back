@@ -130,6 +130,7 @@ router.ws('/connection/:id', (ws, req) => {
       msg = JSON.parse(msg);
     }
    // console.log(msg);
+   // console.log('Еще одно меcто', {msg});
     switch (msg.event) {
       case 'ADD': {
         addNewTask(curConn.id, msg.task)
@@ -160,9 +161,9 @@ router.ws('/connection/:id', (ws, req) => {
       } break;
 
       case 'ADD_COMMENT': {
-        addCommentTask(msg.comment)
+        addCommentTask(msg.comment, msg.task)
           .then(
-            comment => next({ADD_COMMENT: comment})
+            comment => next({ADD_COMMENT: comment, event: comment.event})
           )
       } break;
     }
