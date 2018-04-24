@@ -8,7 +8,7 @@ function updateStatusTask(task, conn, msg) {
 
           task.taskId = task.id;
           if (!task.userId) {
-            task.userId = 196;
+            task.userId = 207;
           }
           return db.eventAdd({task: task, action: 'CHANGE_STATUS'}).then(a => {
               return {
