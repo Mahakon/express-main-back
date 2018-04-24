@@ -14,10 +14,12 @@ router.get('/', (req, res, next) => {
       data => {
         console.log(data);
         if (data !== undefined) {
+          console.log('normal user')
           req.bitbucket = data.bitbucket;
           req.refreshToken = data.refresh_token;
           next();
         } else {
+          console.log('not found')
           res.status(404).send({err: 'not found'})
         }
       },

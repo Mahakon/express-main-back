@@ -191,6 +191,7 @@ router.get('/get', (req, res, next) => {
         if (ans === undefined) {
           next()
         } else {
+          console.log('bitDash' + ans);
           req.acountname = ans.acountname;
           req.slug = ans.slug;
           req.branch = ans.branch;
@@ -301,15 +302,18 @@ router.use(addExtraTasks, (req, res, next) => {
         }
       )
       .then(
-        ans => ans.json()
+        ans => ans.json(),
+        err => {
+          console.log(err);
+          next();
+        }
       )
       .then(
         tasks => {
           console.log(tasks);
           let arr = [];
           tasks.forEach(task => {
-            let curTask = {...task, userid: req.userId};
-            arr.push(addNewTask(req.query.id, curTask));
+            arr.push(addNewTask(req.query.id, task));
           });
           return Promise.all(arr)
         },

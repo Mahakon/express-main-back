@@ -5,7 +5,7 @@ function addNewTask(projectId, task) {
       taskId => {
         console.log(taskId);
           task.taskId = taskId;
-          if (!task.userId) {
+          if (task.userId === undefined) {
             return {
               id: taskId,
               discription: task.discription,
