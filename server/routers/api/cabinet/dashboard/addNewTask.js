@@ -6,16 +6,21 @@ function addNewTask(projectId, task) {
         console.log(taskId);
           task.taskId = taskId;
           if (!task.userId) {
-            task.userId = 200;
-          }
-          return db.eventAdd({task: task, action: 'ADD'}).then(a => {
+            return {
+              id: taskId,
+              discription: task.discription,
+              status: task.status
+            }
+          } else {
+            return db.eventAdd({task: task, action: 'ADD'}).then(a => {
               return {
-                  id: taskId,
-                  discription: task.discription,
-                  status: task.status,
-                  event: a
+                id: taskId,
+                discription: task.discription,
+                status: task.status,
+                event: a
               }
-          }, err => console.log(err));
+            }, err => console.log(err));
+          }
       },
       err => console.log(err)
     )
