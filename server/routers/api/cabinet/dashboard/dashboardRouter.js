@@ -307,7 +307,8 @@ router.use(addExtraTasks, (req, res, next) => {
           console.log(tasks);
           let arr = [];
           tasks.forEach(task => {
-            arr.push(addNewTask(req.query.id, task))
+            let curTask = {...task, userid: req.userId};
+            arr.push(addNewTask(req.query.id, curTask));
           });
           return Promise.all(arr)
         },

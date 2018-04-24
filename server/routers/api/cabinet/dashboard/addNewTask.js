@@ -10,7 +10,7 @@ function addNewTask(projectId, task) {
           }
           return db.eventAdd({task: task, action: 'ADD'}).then(a => {
               return {
-                  id: taskId[0] ? taskId[0] : taskId,
+                  id: taskId,
                   discription: task.discription,
                   status: task.status,
                   event: a

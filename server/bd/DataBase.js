@@ -254,7 +254,7 @@ class DataBase {
     })
   }
 
-  getUserIdByBitbucket(bitbucket = null) {
+  getUserIdByBitbucket(bitbucket) {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
         if (err) {
@@ -272,6 +272,7 @@ class DataBase {
               //   console.log(err);
               reject(err)
             }
+            console.log(result);
             if (result.length === 0) {
               resolve(undefined)
             } else {

@@ -57,11 +57,12 @@ const newBitbucketUser = function (req, res, next) {
     bd.getUserIdByBitbucket(req.userName)
       .then(
         id => {
-          if (id === undefined) {
+          if (id !== undefined) {
+            req.session.user_id = id;
             next();
+          } else {
+            return bd.addBitbucketUser(req.userName, req.userName, req.refreshToken);
           }
-
-          return bd.addBitbucketUser(req.userName, req.userName, req.refreshToken);
         },
         err => {
           console.log(err);

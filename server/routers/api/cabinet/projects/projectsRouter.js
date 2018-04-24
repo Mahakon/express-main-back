@@ -107,7 +107,8 @@ router.post('/add', upload.fields([]), (req, res, next) => {
       tasks => {
         let arr = [];
         tasks.forEach(task => {
-          arr.push(addNewTask(req.projectId, task))
+          let curTask = {...task, userId: req.userId};
+          arr.push(addNewTask(req.projectId, curTask));
         });
         Promise.all(arr)
           .then(
