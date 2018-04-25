@@ -8,10 +8,10 @@
   class DataBase {
     constructor() {
       this.pool  = mysql.createPool({
-        connectionLimit : 990,
+        connectionLimit : 99,
         host            : 'localhost',
         user            : 'root',
-        password        : 'qwerty',
+        password        : '9675',
         //password        : 'qwerty',
         database        : 'tinkoff'
       });
