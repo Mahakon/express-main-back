@@ -11,7 +11,7 @@
         connectionLimit : 990,
         host            : 'localhost',
         user            : 'root',
-        password        : '9675',
+        password        : 'qwerty',
         //password        : 'qwerty',
         database        : 'tinkoff'
       });
@@ -768,8 +768,19 @@
                 console.log(err);
                 reject(err)
               }
-
-              resolve(result);
+              // console.log(result);
+              Promise.all(result.map(comment => this.getUserLogin(comment.user_id))).then(userData => {
+                  resolve(result.map((comment, index) => {
+                      let t = comment;
+                      t.event = {};
+                      t.event.userData = userData[index];
+                      return t;
+                  }));
+              }).catch(err => {
+                  console.log(err);
+                  console.log('Какая-то ошибка');
+                  resolve(result);
+              });
               connection.release();
             })
           } catch(err) {
