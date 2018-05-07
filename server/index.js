@@ -21,7 +21,7 @@ app.use(userSession.getSession());
 
 app.use('/api', apiRouter);
 
-//for reloading page
+
 app.use('/auth/sign-in', staticRouter);
 app.use('/auth/sign-up', staticRouter);
 app.use('/cabinet', staticRouter);
